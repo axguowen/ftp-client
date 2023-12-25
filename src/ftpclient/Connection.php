@@ -682,7 +682,7 @@ class Connection
             throw new \Exception("login to ftp server [{$options['host']}:{$options['port']}] failed", 500);
         }
         // 如果是被动模式
-        if(true === $options['passive']){
+        if(!empty($options['passive'])){
             ftp_pasv($linkID, true);
         }
         // 返回
