@@ -249,6 +249,9 @@ class Connection
         try{
             $result = ftp_put($linkID, $basename, $localFile);
         } catch (\Exception $e){
+            // 关闭连接
+            $this->close();
+            // 返回
             return [null, $e];
         } finally {
             // 删除临时文件
@@ -304,6 +307,9 @@ class Connection
         try{
             $result = ftp_put($linkID, $basename, $localFile);
         } catch (\Exception $e){
+            // 关闭连接
+            $this->close();
+            // 返回
             return [null, $e];
         }
         // 返回结果
@@ -334,6 +340,9 @@ class Connection
         try{
             $result = ftp_delete($linkID, $key);
         } catch (\Exception $e){
+            // 关闭连接
+            $this->close();
+            // 返回
             return [null, $e];
         }
         // 返回结果
@@ -386,7 +395,9 @@ class Connection
             // 删除目录
             ftp_rmdir($linkID, $dirname);
         } catch (\Exception $e){
-            // 返回失败
+            // 关闭连接
+            $this->close();
+            // 返回
             return [null, $e];
         }
         // 返回成功
@@ -450,6 +461,9 @@ class Connection
         try{
             $result = ftp_rename($linkID, $from, $to);
         } catch (\Exception $e){
+            // 关闭连接
+            $this->close();
+            // 返回
             return [null, $e];
         }
         // 返回成功
@@ -504,6 +518,9 @@ class Connection
         try{
             $result = ftp_rename($linkID, $from, $to);
         } catch (\Exception $e){
+            // 关闭连接
+            $this->close();
+            // 返回
             return [null, $e];
         }
         // 返回成功
