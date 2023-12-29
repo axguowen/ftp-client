@@ -371,11 +371,13 @@ class Connection
         // 拼接分隔符
         $dirname = $this->rootPath . '/' . $dirname;
         // 列出目录中的全部子文件或目录
-        $childrenFiles = ftp_mlsd($linkID, $dirname);
+        $childrenFiles = ftp_nlist($linkID, $dirname);
         // 失败
         if(!is_array($childrenFiles)){
             return [null, new \Exception('目录不存在: ' . $originalDirname)];
         }
+        // 获取目录列表
+        $childrenFiles = $this->parseFileList($childrenFiles);
         try{
             // 遍历删除
             foreach ($childrenFiles as $child){
@@ -646,11 +648,13 @@ class Connection
             $targetDirname .= '/' . $dirname;
         }
         // 列出目录中的全部子文件或目录
-        $childrenFiles = ftp_mlsd($linkID, $targetDirname);
+        $childrenFiles = ftp_nlist($linkID, $targetDirname);
         // 目录不存在
         if(!is_array($childrenFiles)){
             return [null, new \Exception('获取文件列表出错: ' . $originalDirname)];;
         }
+        // 获取目录列表
+        $childrenFiles = $this->parseFileList($childrenFiles);
         // 返回成功
         return [$childrenFiles, null];
     }
@@ -793,11 +797,13 @@ class Connection
     protected function clearDir($dirname)
     {
         // 列出目录中的全部子文件或目录
-        $childrenFiles = ftp_mlsd($this->linkID, $dirname);
+        $childrenFiles = ftp_nlist($this->linkID, $dirname);
         // 目录不存在
         if(!is_array($childrenFiles)){
             return;
         }
+        // 获取目录列表
+        $childrenFiles = $this->parseFileList($childrenFiles);
         // 遍历删除
         foreach ($childrenFiles as $child){
             // 如果是文件
@@ -813,6 +819,30 @@ class Connection
                 ftp_rmdir($this->linkID, $dirname . '/' . $child['name']);
             }
         }
+    }
+
+    /**
+     * 解析目录内的文件列表
+     * @access protected
+     * @param array $files
+     * @return array
+     */
+    protected function parseFileList(array $files)
+    {
+        // 文件列表
+        $fileList = [];
+        // 遍历文件列表
+        foreach ($files as $file){
+            // 获取大小
+            $size = ftp_size($this->linkID, $file);
+            // 记录
+            $fileList[] = [
+                'name' => $file,
+                'type' => -1 === $size ? 'dir' : 'file',
+            ];
+        }
+        // 返回
+        return $fileList;
     }
 
     /**
