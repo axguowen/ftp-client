@@ -34,4 +34,24 @@ class DirTool
     {
         return trim(static::filterRedundantSeparator($path), '/');
     }
+
+    /**
+     * 排序
+     * @access public
+     * @param array $items
+     * @param string $field
+     * @param string $order
+     * @return string
+     */
+    public static function sort($items, $field, $order = 'asc')
+    {
+        // 排序
+        uasort($items, function ($a, $b) use ($field, $order) {
+            $fieldA = $a[$field] ?? null;
+            $fieldB = $b[$field] ?? null;
+            return 'desc' == strtolower($order) ? intval($fieldB > $fieldA) : intval($fieldA > $fieldB);
+        });
+        // 返回
+        return $items;
+    }
 }

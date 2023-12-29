@@ -831,18 +831,37 @@ class Connection
     {
         // 文件列表
         $fileList = [];
+        // 目录列表
+        $dirList = [];
         // 遍历文件列表
         foreach ($files as $file){
+            // 如果是特殊目录
+            if(preg_match('#((\/\.)|(\/\.\.))$#', $file)){
+                continue;
+            }
             // 获取大小
             $size = ftp_size($this->linkID, $file);
+            // 如果是目录
+            if(-1 === $size){
+                // 记录目录
+                $dirList[] = [
+                    'name' => $file,
+                    'type' => 'dir',
+                ];
+                continue;
+            }
             // 记录
             $fileList[] = [
                 'name' => $file,
-                'type' => -1 === $size ? 'dir' : 'file',
+                'type' => 'file',
             ];
         }
-        // 返回
-        return $fileList;
+        // 目录排序
+        $dirList = DirTool::sort($dirList, 'name');
+        // 文件排序
+        $fileList = DirTool::sort($fileList, 'name');
+        // 返回合并结果
+        return array_merge($dirList, $fileList);
     }
 
     /**
