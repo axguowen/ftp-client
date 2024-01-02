@@ -335,7 +335,7 @@ class Connection
             return [null, new \Exception('文件名不合法: ' . $originalKey)];
         }
         // 拼接根目录
-        $key = $this->rootPath . '/' . $key;
+        $key = $this->rootPath . $key;
         // 删除文件
         try{
             $result = ftp_delete($linkID, $key);
@@ -369,7 +369,7 @@ class Connection
             return [null, new \Exception('目录不合法: ' . $originalDirname)];
         }
         // 拼接分隔符
-        $dirname = $this->rootPath . '/' . $dirname;
+        $dirname = $this->rootPath . $dirname;
         // 列出目录中的全部子文件或目录
         $childrenFiles = ftp_nlist($linkID, $dirname);
         // 失败
@@ -384,14 +384,14 @@ class Connection
                 // 如果是文件
                 if($child['type'] === 'file'){
                     // 删除文件
-                    ftp_delete($linkID, $dirname . '/' . $child['name']);
+                    ftp_delete($linkID, $child['name']);
                 }
                 // 如果是目录
                 if($child['type'] === 'dir'){
                     // 清空目录下的内容
-                    $this->clearDir($dirname . '/' . $child['name']);
+                    $this->clearDir($child['name']);
                     // 删除目录
-                    ftp_rmdir($linkID, $dirname . '/' . $child['name']);
+                    ftp_rmdir($linkID, $child['name']);
                 }
             }
             // 删除目录
@@ -426,7 +426,7 @@ class Connection
             return [null, new \Exception('原文件名不合法: ' . $originalFrom)];
         }
         // 拼接根目录
-        $from = $this->rootPath . '/' . $from;
+        $from = $this->rootPath . $from;
 
         // 获取原文件大小
         $fileSize = ftp_size($linkID, $from);
@@ -458,7 +458,7 @@ class Connection
         }
 
         // 拼接根目录
-        $to = $this->rootPath . '/' . $to;
+        $to = $this->rootPath . $to;
         
         try{
             $result = ftp_rename($linkID, $from, $to);
@@ -492,7 +492,7 @@ class Connection
             return [null, new \Exception('原目录不合法: ' . $originalFrom)];
         }
         // 拼接根目录
-        $from = $this->rootPath . '/' . $from;
+        $from = $this->rootPath . $from;
         // 进入目录判断目录是否存在
         $chdirResult = @ftp_chdir($linkID, $from);
         // 失败
@@ -515,7 +515,7 @@ class Connection
             return $changeToDirResult;
         }
         // 拼接根目录
-        $to = $this->rootPath . '/' . $to;
+        $to = $this->rootPath . $to;
         
         try{
             $result = ftp_rename($linkID, $from, $to);
@@ -549,7 +549,7 @@ class Connection
             return [null, new \Exception('文件名不合法: ' . $originalKey)];
         }
         // 拼接根目录
-        $key = $this->rootPath . '/' . $key;
+        $key = $this->rootPath . $key;
 
         // 获取文件大小
         $fileSize = ftp_size($linkID, $key);
@@ -605,7 +605,7 @@ class Connection
             return [null, new \Exception('文件名不合法: ' . $originalKey)];
         }
         // 拼接根目录
-        $key = $this->rootPath . '/' . $key;
+        $key = $this->rootPath . $key;
 
         // 获取文件最后修改时间
         $fileUpdateTime = ftp_mdtm($linkID, $key);
@@ -645,7 +645,7 @@ class Connection
         $targetDirname = $this->rootPath;
         // 如果不为空
         if($dirname !== ''){
-            $targetDirname .= '/' . $dirname;
+            $targetDirname .= $dirname;
         }
         // 列出目录中的全部子文件或目录
         $childrenFiles = ftp_nlist($linkID, $targetDirname);
@@ -809,14 +809,14 @@ class Connection
             // 如果是文件
             if($child['type'] === 'file'){
                 // 删除文件
-                ftp_delete($this->linkID, $dirname . '/' . $child['name']);
+                ftp_delete($this->linkID, $child['name']);
             }
             // 如果是目录
             if($child['type'] === 'dir'){
                 // 清空目录下的内容
-                $this->clearDir($dirname . '/' . $child['name']);
+                $this->clearDir($child['name']);
                 // 删除目录
-                ftp_rmdir($this->linkID, $dirname . '/' . $child['name']);
+                ftp_rmdir($this->linkID, $child['name']);
             }
         }
     }
