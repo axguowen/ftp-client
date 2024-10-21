@@ -687,6 +687,7 @@ class Connection
         }
         // 如果是被动模式
         if(!empty($options['passive'])){
+            ftp_set_option($linkID, FTP_USEPASVADDRESS, false);
             ftp_pasv($linkID, true);
         }
         // 返回
